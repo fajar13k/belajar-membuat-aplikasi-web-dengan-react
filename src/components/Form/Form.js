@@ -37,8 +37,7 @@ export default function Form({ onAddNoteHandler }) {
       setTimeout(() => {
         setValidation(true);
       }, 3000);
-
-      return alert("Ga bisa lah");
+      return;
     }
 
     try {

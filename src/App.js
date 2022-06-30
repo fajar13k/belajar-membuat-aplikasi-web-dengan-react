@@ -10,11 +10,25 @@ import "./style.css";
 
 export default function App() {
   const [notes, setNotes] = useState(getInitialData());
+  const [searchQuery, setSearchQuery] = useState("");
 
   const noteFilter = (noteSample, condition) => {
     return noteSample.filter(
       (filteredNote) => filteredNote.archived === condition
     );
+  };
+
+  const onSearchQueryHandler = (query = "") => {
+    if (query === "") {
+      setNotes(getInitialData());
+      return;
+    }
+
+    let filteredNotes = notes.filter((note) =>
+      note?.title?.toLowerCase().includes(query)
+    );
+
+    setNotes(filteredNotes);
   };
 
   const onArchiveHandler = (id) => {
@@ -45,7 +59,11 @@ export default function App() {
 
   return (
     <>
-      <Nav />
+      <Nav
+        onSearchQuery={onSearchQueryHandler}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
       <MainBody>
         <Form onAddNoteHandler={onAddNoteHandler} />
         <Note
