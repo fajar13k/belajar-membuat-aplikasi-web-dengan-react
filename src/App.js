@@ -1,25 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Nav from "./components/Nav";
+import MainBody from "./components/MainBody";
+import Form from "./components/Form/Form";
+import Note from "./components/Note/Note";
 
-function App() {
+import { getInitialData } from "./utils/index";
+
+import "./style.css";
+
+export default function App() {
+  const [notes, setNotes] = useState(getInitialData());
+
+  const noteFilter = (noteSample, condition) => {
+    return noteSample.filter(
+      (filteredNote) => filteredNote.archived === condition
+    );
+  };
+
+  const onArchiveHandler = (id) => {
+    notes.map((note) => {
+      if (note.id === id) {
+        setNotes([...notes, (note.archived = !note.archived)]);
+      }
+    });
+  };
+
+  const onDeleteHandler = (id) => {
+    const noteSample = notes.filter((note) => note.id !== id);
+    setNotes(noteSample);
+  };
+
+  const onAddNoteHandler = (title, body) => {
+    setNotes([
+      ...notes,
+      {
+        id: +new Date(),
+        title,
+        body,
+        createdAt: +new Date(),
+        archived: false,
+      },
+    ]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Nav />
+      <MainBody>
+        <Form onAddNoteHandler={onAddNoteHandler} />
+        <Note
+          notes={noteFilter(notes, false)}
+          onDeleteHandler={onDeleteHandler}
+          onArchiveHandler={onArchiveHandler}
+          categoryTitle="Active Notes"
+        />
+        <Note
+          notes={noteFilter(notes, true)}
+          onDeleteHandler={onDeleteHandler}
+          onArchiveHandler={onArchiveHandler}
+          categoryTitle="Archived Notes"
+        />
+      </MainBody>
+    </>
   );
 }
-
-export default App;
